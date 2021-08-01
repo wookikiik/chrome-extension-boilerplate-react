@@ -3,16 +3,16 @@ process.env.BABEL_ENV = 'development';
 process.env.NODE_ENV = 'development';
 process.env.ASSET_PATH = '/';
 
-var WebpackDevServer = require('webpack-dev-server'),
+let WebpackDevServer = require('webpack-dev-server'),
   webpack = require('webpack'),
   config = require('../webpack.config'),
   env = require('./env'),
   path = require('path');
 
-var options = config.chromeExtensionBoilerplate || {};
-var excludeEntriesToHotReload = options.notHotReload || [];
+let options = config.chromeExtensionBoilerplate || {};
+let excludeEntriesToHotReload = options.notHotReload || [];
 
-for (var entryName in config.entry) {
+for (let entryName in config.entry) {
   if (excludeEntriesToHotReload.indexOf(entryName) === -1) {
     config.entry[entryName] = [
       'webpack-dev-server/client?http://localhost:' + env.PORT,
@@ -27,9 +27,9 @@ config.plugins = [new webpack.HotModuleReplacementPlugin()].concat(
 
 delete config.chromeExtensionBoilerplate;
 
-var compiler = webpack(config);
+let compiler = webpack(config);
 
-var server = new WebpackDevServer(compiler, {
+let server = new WebpackDevServer(compiler, {
   https: false,
   hot: true,
   injectClient: false,

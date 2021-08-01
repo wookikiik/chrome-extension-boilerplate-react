@@ -13,19 +13,25 @@
     "prettier": "prettier --write '**/*.{js,jsx,css,html}'"
   },
   "dependencies": {
-    "@hot-loader/react-dom": "^17.0.1",
+    "@hot-loader/react-dom":  "^17.0.1",
     "@types/chrome": "0.0.132",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
+    "@types/redux": "^3.6.0",
+    "@types/react-redux": "^7.1.18",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-hot-loader": "^4.13.0"
+    "react-hot-loader": "^4.13.0",
+    "redux": "^4.1.0",
+    "react-redux": "^7.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.17",
     "@babel/plugin-proposal-class-properties": "^7.12.13",
     "@babel/preset-env": "^7.12.17",
     "@babel/preset-react": "^7.12.13",
+    "@typescript-eslint/eslint-plugin": "^4.28.5",
+    "@typescript-eslint/parser": "^4.28.5",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
     "babel-preset-react-app": "^10.0.0",
@@ -46,6 +52,7 @@
     "node-sass": "^4.14.1",
     "prettier": "^2.2.1",
     "sass-loader": "^11.0.1",
+    "shelljs": "^0.8.4",
     "source-map-loader": "^2.0.1",
     "style-loader": "^2.0.0",
     "terser-webpack-plugin": "^5.1.1",

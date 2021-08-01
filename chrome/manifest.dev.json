@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Chrome Extension with React & Webpack",
+  "permissions": [
+    "contextMenus"
+  ],
+  "options_page": "options.html",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "public/img/icon-34.png"
+  },
+  "icons": {
+    "34": "public/img/icon-34.png",
+    "128": "public/im1g/icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*", "<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.styles.css"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "content.styles.css",
+        "public/img/icon-128.png",
+        "public/img/icon-34.png"
+      ],
+      "matches": []
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-<img src="src/assets/img/icon-128.png" width="64"/>
+<img src="assets/img/icon-128.png" width="64"/>
 
 # Chrome Extension Boilerplate with React 17 and Webpack 5
 
@@ -82,7 +82,7 @@ Let's say that you want use the `myContentScript` entry point as content script,
 {
   …
   entry: {
-    myContentScript: "./src/js/myContentScript.js"
+    myContentScript: "./chrome/js/myContentScript.js"
   },
   chromeExtensionBoilerplate: {
     notHotReload: ["myContentScript"]
