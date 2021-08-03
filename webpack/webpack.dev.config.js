@@ -1,20 +1,19 @@
 let webpack = require('webpack'),
   path = require('path'),
   fileSystem = require('fs-extra'),
-  env = require('./utils/env'),
+  env = require('../utils/env'),
   { CleanWebpackPlugin } = require('clean-webpack-plugin'),
   CopyWebpackPlugin = require('copy-webpack-plugin'),
   HtmlWebpackPlugin = require('html-webpack-plugin'),
-  TerserPlugin = require('terser-webpack-plugin');
-
-// const ASSET_PATH = process.env.ASSET_PATH || '/';
+  TerserPlugin = require('terser-webpack-plugin'),
+  app_root_path = require('app-root-path').path;
 
 let alias = {
   'react-dom': '@hot-loader/react-dom',
 };
 
 // load the secrets
-let secretsPath = path.join(__dirname, 'secrets.' + env.NODE_ENV + '.js');
+let secretsPath = path.join(app_root_path, 'secrets.' + env.NODE_ENV + '.js');
 
 let fileExtensions = [
   'jpg',
@@ -34,22 +33,34 @@ if (fileSystem.existsSync(secretsPath)) {
 }
 
 const options = {
-  mode: process.env.NODE_ENV || 'development',
-  chromeExtensionBoilerplate: {
-    notHotReload: ['contentScript', 'devtools'],
-  },
+  mode: 'development',
+  devtool : 'cheap-module-source-map',
   entry: {
-    options: path.join(__dirname, 'chrome', 'pages', 'Options', 'index.jsx'),
-    popup: path.join(__dirname, 'chrome', 'pages', 'Popup', 'index.jsx'),
-    background: path.join(__dirname, 'chrome', 'pages', 'Background', 'index.js'),
-    content: path.join(__dirname, 'chrome', 'pages', 'Content', 'index.js'),
+    options: [
+      'webpack-dev-server/client?http://localhost:' + env.PORT,
+      'webpack/hot/dev-server',
+      path.join(app_root_path,'chrome', 'pages', 'Options', 'index.jsx')
+    ],
+    popup: [
+      'webpack-dev-server/client?http://localhost:' + env.PORT,
+      'webpack/hot/dev-server',
+      path.join(app_root_path, 'chrome', 'pages', 'Popup', 'index.jsx')
+    ],
+    background: path.join(app_root_path, 'chrome', 'pages', 'Background', 'index.js'),
+    content: path.join(app_root_path, 'chrome', 'pages', 'Content', 'index.js'),
+    // test: [
+    //   'webpack-dev-server/client?http://localhost:' + env.PORT,
+    //   'webpack/hot/dev-server',
+    //   path.join(app_root_path, 'chrome', 'test.js')
+    // ],
     // newtab: path.join(__dirname, 'chrome', 'pages', 'Newtab', 'index.jsx'),
     // devtools: path.join(__dirname, 'chrome', 'pages', 'Devtools', 'index.js'),
     // panel: path.join(__dirname, 'chrome', 'pages', 'Panel', 'index.jsx'),
   },
   output: {
-    path: path.resolve(__dirname, 'build'),
+    path: path.resolve(app_root_path, 'build'),
     filename: '[name].js',
+    publicPath: '/',
   },
   module: {
     rules: [
@@ -110,6 +121,7 @@ const options = {
   },
   plugins: [
     new webpack.ProgressPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
     // clean the build folder
     new CleanWebpackPlugin({
       verbose: true,
@@ -120,23 +132,18 @@ const options = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: 'chrome/pages/Content/content.styles.css',
-          to: path.join(__dirname, 'build'),
+          from: path.join(app_root_path, 'chrome','pages','Content','content.styles.css'),
+          to: path.join(app_root_path, 'build'),
           force: true,
         },
         {
-          from: 'public/**',
-          to: path.join(__dirname, 'build/[path][name].[ext]'),
+          from: path.join(app_root_path, 'public', '**'),
+          to: path.join(app_root_path, 'build/[path][name].[ext]'),
           force: true,
         },
         {
-          from: "chrome/manifest.(dev|prod).json",
-          to: path.join(__dirname, 'build', 'manifest.json'),
-          force: true,
-          filter: async (resourcePath) => {
-            const nodeEnv = env.NODE_ENV === 'development' ? 'dev': 'prod';
-            return resourcePath.indexOf(nodeEnv) !== -1;
-          },
+          from: path.join(app_root_path, 'chrome', 'manifest.dev.json'),
+          to: path.join(app_root_path, 'build', 'manifest.json'),
           transform: function (content, path) {
             return Buffer.from(
               JSON.stringify({
@@ -150,61 +157,21 @@ const options = {
       ],
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'chrome', 'pages', 'Options', 'index.html'),
+      template: path.join(app_root_path, 'chrome', 'pages', 'Options', 'index.html'),
       filename: 'options.html',
       chunks: ['options'],
       cache: false,
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'chrome', 'pages', 'Popup', 'index.html'),
+      template: path.join(app_root_path, 'chrome', 'pages', 'Popup', 'index.html'),
       filename: 'popup.html',
       chunks: ['popup'],
       cache: false,
     }),
-    // new CopyWebpackPlugin({
-    //   patterns: [
-    //     {
-    //       from: 'public/img/icon-34.png',
-    //       to: path.join(__dirname, 'build/public/img'),
-    //       force: true,
-    //     },
-    //   ],
-    // }),
-    // new HtmlWebpackPlugin({
-    //   template: path.join(__dirname, 'chrome', 'pages', 'Newtab', 'index.html'),
-    //   filename: 'newtab.html',
-    //   chunks: ['newtab'],
-    //   cache: false,
-    // }),
-    // new HtmlWebpackPlugin({
-    //   template: path.join(__dirname, 'chrome', 'pages', 'Devtools', 'index.html'),
-    //   filename: 'devtools.html',
-    //   chunks: ['devtools'],
-    //   cache: false,
-    // }),
-    // new HtmlWebpackPlugin({
-    //   template: path.join(__dirname, 'chrome', 'pages', 'Panel', 'index.html'),
-    //   filename: 'panel.html',
-    //   chunks: ['panel'],
-    //   cache: false,
-    // }),
   ],
   infrastructureLogging: {
     level: 'info',
   },
 };
-
-if (env.NODE_ENV === 'development') {
-  options.devtool = 'cheap-module-source-map';
-} else {
-  options.optimization = {
-    minimize: true,
-    minimizer: [
-      new TerserPlugin({
-        extractComments: false,
-      }),
-    ],
-  };
-}
 
 module.exports = options;
