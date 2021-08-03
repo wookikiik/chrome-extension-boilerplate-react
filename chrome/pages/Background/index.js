@@ -1,19 +1,14 @@
-console.log('This is the background page.');
-console.log('Put the background scripts here.');
+// import "./inject";
 
-let CONTEXT_MENU_ID = "sample";
-
-function getword(info) {
-  if (info.menuItemId !== CONTEXT_MENU_ID) {
-    return;
-  }
-  console.log("Word ", info);
-}
-
-chrome.contextMenus.create({
-  title: "Search: %s",
-  contexts:["selection"],
-  id: CONTEXT_MENU_ID
+chrome.runtime.onInstalled.addListener(function() {
+  console.log('chrome.runtime.onInstalled!!');
 });
 
-chrome.contextMenus.onClicked.addListener(getword)
+chrome.runtime.onMessage.addListener(function(message, sender, reply) {
+  // console.log(message, sender);
+  if(message.sender === 'Popup'){
+    reply('reply Popup');
+  }
+});
+
+// chrome.storage.local.set({variable: variableInformation});
